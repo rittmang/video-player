@@ -71,7 +71,7 @@ body {
   
   .video-container .progress-controls .time-remaining {
     margin: 1vw;
-    width: 4vw;
+    width: 2vw;
   }
   
   .video-container .progress-controls .progress-bar {
@@ -119,8 +119,8 @@ body {
     border: none;
     width: 5vw;
     height: 5vw;
-    min-width: 50px;
-    min-height: 50px;
+    min-width: 20px;
+    min-height: 20px;
     margin: 0px 1vw;
     transform: scale(0.9);
     transition: all 0.2s ease-in-out;
@@ -237,6 +237,18 @@ body {
   
   @media only screen and (max-width: 768px) {
     .video-container .controls .title {
+      display: none;
+    }
+  }
+
+  @media only screen and (max-width: 625px) {
+    .video-container .controls .title {
+      display: none;
+    }
+    .video-container .controls .rewind {
+      display: none;
+    }
+    .video-container .controls .fast-forward {
       display: none;
     }
   }

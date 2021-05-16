@@ -191,8 +191,13 @@ video.addEventListener('timeupdate', () => {
   var seconds=Math.trunc(totalSecondsRemaining-minutes*60);
   let minute = (minutes.toString().padStart('2', '0'));
   let second = (seconds.toString().padStart('2', '0'));
-
-  timeLeft.textContent = `${hours ? hours : '00'}:${minute}:${second}`;
+  if(hours > 0){
+    timeLeft.textContent = `${hours ? hours : '00'}:${minute}:${second}`;
+  }
+  else{
+    timeLeft.textContent = `${minute}:${second}`;
+  }
+  
 });
 
 
