@@ -11,6 +11,7 @@ const playPauseButton = document.querySelector('.video-container .controls butto
 const rewindButton = document.querySelector('.video-container .controls button.rewind');
 const fastForwardButton = document.querySelector('.video-container .controls button.fast-forward');
 const volumeButton = document.querySelector('.video-container .controls button.volume');
+const volumeTooltip = document.querySelector('.video-container .controls button.volume div');
 const fullScreenButton = document.querySelector('.video-container .controls button.full-screen');
 const playButton = playPauseButton.querySelector('.playing');
 const pauseButton = playPauseButton.querySelector('.paused');
@@ -37,6 +38,9 @@ minimizeButton.style.display = 'none';
 captionsOn.style.display='';
 captionsOff.style.display='none';
 
+fullVolumeButton.style.display = '';
+mutedButton.style.display = 'none';
+
 var track=video.textTracks[0];
 // var cue=track.cues[0];
 // if(typeof cue !== 'undefined'){
@@ -44,7 +48,6 @@ var track=video.textTracks[0];
 // }
 
 for(i=0;i<track.cues.length;i++){
-  console.log("16");
   track.cues[i].line=16;
 }
 
@@ -66,26 +69,19 @@ const displayControls = () => {
 const playPause = () => {
   if (video.paused && !cjs.connected) {
     video.play();
-    playButton.style.display = 'none';
-    pauseButton.style.display = '';
   }
   else if(!video.paused && !cjs.connected) {
     video.pause();
-    playButton.style.display = '';
-    pauseButton.style.display = 'none';
   }
   else if(cjs.paused && cjs.connected){
     cjs.play();
-    playButton.style.display = 'none';
-    pauseButton.style.display = '';
   }
   else if(!cjs.paused && cjs.connected){
     cjs.pause();
-    playButton.style.display = '';
-    pauseButton.style.display = 'none';
   }
 
 };
+
 
 
 const toggleCaptions = () => {
@@ -102,39 +98,16 @@ const toggleCaptions = () => {
    
   }
   
-
-cjs.on('available',()=>{
-    console.log("Chromecast available");
-});
-cjs.on('connect',()=>{
-    console.log("Connecting");
-    castButton.classList.remove('off');
-    castButton.classList.remove('on');
-    castButton.classList.add('turning-on');//turning-on
-});
-cjs.on('disconnect',()=>{
-    console.log("Disconnecting");
-    castButton.classList.remove('on');
-    castButton.classList.remove('turning-on');
-    castButton.classList.add('off');
-});
-cjs.on('error',(err)=>{
-    console.log('Error\t:'+err);
-});
-cjs.on('playing',()=>{
-  castButton.classList.remove('turning-on');
-  castButton.classList.remove('off');
-  castButton.classList.add('on');
-});
-
 const toggleMute = () => {
   video.muted = !video.muted;
   if (video.muted) {
     fullVolumeButton.style.display = 'none';
     mutedButton.style.display = '';
+    volumeTooltip.setAttribute('data-tooltip','Unmute (m)');
   } else {
     fullVolumeButton.style.display = '';
     mutedButton.style.display = 'none';
+    volumeTooltip.setAttribute('data-tooltip','Mute (m)');
   }
 };
 
@@ -194,7 +167,6 @@ document.addEventListener('mousemove', () => {
 video.addEventListener('timeupdate', () => {
   
   watchedBar.style.width = ((video.currentTime / video.duration) * 100) + '%';
-
   var totalSecondsRemaining = video.duration - video.currentTime;
 
   const time = new Date(null);
@@ -216,6 +188,14 @@ video.addEventListener('timeupdate', () => {
   
 });
 
+video.addEventListener('play',()=>{
+  playButton.style.display = 'none';
+  pauseButton.style.display = '';
+});
+video.addEventListener('pause',()=>{
+  playButton.style.display = '';
+  pauseButton.style.display = 'none';
+});
 
 progressBar.addEventListener('click', (event) => {
   const pos = (event.pageX  - (progressBar.offsetLeft + progressBar.offsetParent.offsetLeft)) / progressBar.offsetWidth;
@@ -267,3 +247,32 @@ castButton.addEventListener('click',()=>{
   }
 });
 
+cjs.on('available',()=>{
+  console.log("Chromecast available");
+});
+cjs.on('connect',()=>{
+  console.log("Connecting");
+  castButton.classList.remove('off');
+  castButton.classList.remove('on');
+  castButton.classList.add('turning-on');//turning-on
+});
+cjs.on('disconnect',()=>{
+  console.log("Disconnecting");
+  castButton.classList.remove('on');
+  castButton.classList.remove('turning-on');
+  castButton.classList.add('off');
+});
+cjs.on('error',(err)=>{
+  console.log('Error\t:'+err);
+});
+cjs.on('playing',()=>{
+  castButton.classList.remove('turning-on');
+  castButton.classList.remove('off');
+  castButton.classList.add('on');
+  playButton.style.display = 'none';
+  pauseButton.style.display = '';
+});
+cjs.on('paused',()=>{
+  playButton.style.display = '';
+  pauseButton.style.display = 'none';
+})

@@ -284,8 +284,7 @@ class Castjs {
             var mediaInfo = new chrome.cast.media.MediaInfo(this.src);
             mediaInfo.contentType="video/mp4";
             mediaInfo.metadata = new chrome.cast.media.GenericMediaMetadata();
-            
-            
+            mediaInfo.metadata.metadataType = chrome.cast.media.MetadataType.GENERIC;
 
             // This part is the reason why people love this library <3
             if (this.subtitles.length) {
@@ -307,7 +306,7 @@ class Castjs {
                 for (var i in this.subtitles) {
                     // chrome.cast.media.TrackType.TEXT
                     // chrome.cast.media.TextTrackType.CAPTIONS
-                    var track =  new chrome.cast.media.Track(i, 'TEXT');
+                    var track =  new chrome.cast.media.Track(i, chrome.cast.media.TrackType.TEXT);
                     track.name =             this.subtitles[i].label;
                     track.subtype =          chrome.cast.media.TextTrackType.SUBTITLES;
                     track.trackContentId =   this.subtitles[i].src;
