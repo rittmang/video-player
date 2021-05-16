@@ -2,6 +2,7 @@ const videoContainer = document.querySelector('.video-container');
 const video = document.querySelector('.video-container video');
 const cjs = new Castjs();
 const controlsContainer = document.querySelector('.video-container .controls-container');
+let elem=document.documentElement;
 
 const playPauseButton = document.querySelector('.video-container .controls button.play-pause');
 const rewindButton = document.querySelector('.video-container .controls button.rewind');
@@ -124,7 +125,8 @@ const toggleMute = () => {
 
 const toggleFullScreen = () => {
   if (!document.fullscreenElement) {
-    videoContainer.requestFullscreen();
+    // videoContainer.requestFullscreen();
+    elem.requestFullscreen({navigationUI:"hide"});
   } else {
     document.exitFullscreen();
   }
