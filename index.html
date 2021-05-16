@@ -10,13 +10,13 @@
   <link href="https://fonts.googleapis.com/css?family=Rubik&display=swap" rel="stylesheet">
 </head>
 
-<body>
+<body oncontextmenu="return false;">
   <div class="video-container">
     <!-- <video src="bbb.mp4"></video> -->
     <!-- <div id="video-overlay">
       <img src="the-social-dilemma-wide-poster.jpg"/>
     </div> -->
-    <video poster="https://file-examples-com.github.io/uploads/2017/10/file_example_JPG_1MB.jpg" id="video">
+    <video disableRemotePlayback poster="https://file-examples-com.github.io/uploads/2017/10/file_example_JPG_1MB.jpg" id="video">
       <source src="ElephantsDream.mp4" type="video/mp4">
       <track label="English" kind="subtitles" src="subtitles-en.vtt" srclang="en" default crossorigin="anonymous"> 
     </video>
@@ -138,13 +138,13 @@
   <script>
     
     var metadata={
-      poster:'https://muvibey.ml/English/The%20Social%20Dilemma/the-social-dilemma-long-poster.jpg',
+      poster:document.getElementById("video").poster,
       title:document.getElementsByClassName('title')[0].getElementsByTagName("span")[0].innerHTML,
       description:'Sample Description',
       subtitles:[{
         active:true,
         label:'English',
-        src:'sub.vtt'
+        src:document.querySelector('.video-container video track').src
       }]
     };
     

@@ -34,14 +34,16 @@ captionsOn.style.display='';
 captionsOff.style.display='none';
 
 var track=video.textTracks[0];
-var cue=track.cues[0];
-if(typeof cue !== 'undefined'){
-  cue.line=16;
+// var cue=track.cues[0];
+// if(typeof cue !== 'undefined'){
+//   cue.line=16;
+// }
+
+for(i=0;i<track.cues.length;i++){
+  track.cues[i].line=16;
 }
 
-
 const displayControls = () => {
-  
   controlsContainer.style.opacity = '1';
   document.body.style.cursor = 'initial';
   
@@ -53,10 +55,8 @@ const displayControls = () => {
     
     document.body.style.cursor = 'none';
     video.style.setProperty('line-height',10+'px')
-  }, 1000);
+  }, 5000);
 };
-
-
 
 const playPause = () => {
   if (video.paused && !cjs.connected) {
@@ -157,9 +157,22 @@ document.addEventListener('keyup', (event) => {
   displayControls();
 });
 
+controlsContainer.addEventListener('mousehover',()=>{
+  controlsContainer.style.opacity = '1';
+  document.body.style.cursor = 'initial';
+})
+
 document.addEventListener('mousemove', () => {
+  if(video.paused){
+    console.log("Paused)");
+    controlsContainer.style.opacity = '1';
+    document.body.style.cursor = 'initial';
+  }
+  else{
   displayControls();
+  }
 });
+
 
 
 video.addEventListener('timeupdate', () => {
@@ -181,6 +194,7 @@ video.addEventListener('timeupdate', () => {
 
   timeLeft.textContent = `${hours ? hours : '00'}:${minute}:${second}`;
 });
+
 
 progressBar.addEventListener('click', (event) => {
   const pos = (event.pageX  - (progressBar.offsetLeft + progressBar.offsetParent.offsetLeft)) / progressBar.offsetWidth;
