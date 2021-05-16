@@ -129,13 +129,14 @@ body {
     border: none;
     width: 5vw;
     height: 5vw;
-    min-width: 20px;
-    min-height: 20px;
+    min-width: 35px;
+    min-height: 35px;
     margin: 0px 1vw;
     transform: scale(0.9);
     transition: all 0.2s ease-in-out;
     cursor: pointer;
   }
+  
   
   .video-container .controls button:hover {
     opacity: 1;
@@ -262,6 +263,13 @@ body {
       display: none;
     }
   }
+  /* @media screen and (orientation:portrait){
+    .video-container .controls .button{
+      width:20vw;
+      height:20vw;
+    }
+    
+  } */
   
   .video-container .controls .title .series {
     color: #FEFEFE;

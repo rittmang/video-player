@@ -1,6 +1,9 @@
 const videoContainer = document.querySelector('.video-container');
 const video = document.querySelector('.video-container video');
-const cjs = new Castjs();
+const cjs = new Castjs({
+  receiver:'CC1AD845',
+  joinpolicy:'origin_scoped',
+});
 const controlsContainer = document.querySelector('.video-container .controls-container');
 let elem=document.documentElement;
 
@@ -41,6 +44,7 @@ var track=video.textTracks[0];
 // }
 
 for(i=0;i<track.cues.length;i++){
+  console.log("16");
   track.cues[i].line=16;
 }
 
@@ -70,7 +74,16 @@ const playPause = () => {
     playButton.style.display = '';
     pauseButton.style.display = 'none';
   }
-
+  else if(cjs.paused && cjs.connected){
+    cjs.play();
+    playButton.style.display = 'none';
+    pauseButton.style.display = '';
+  }
+  else if(!cjs.paused && cjs.connected){
+    cjs.pause();
+    playButton.style.display = '';
+    pauseButton.style.display = 'none';
+  }
 
 };
 
@@ -96,11 +109,13 @@ cjs.on('available',()=>{
 cjs.on('connect',()=>{
     console.log("Connecting");
     castButton.classList.remove('off');
+    castButton.classList.remove('on');
     castButton.classList.add('turning-on');//turning-on
 });
 cjs.on('disconnect',()=>{
     console.log("Disconnecting");
     castButton.classList.remove('on');
+    castButton.classList.remove('turning-on');
     castButton.classList.add('off');
 });
 cjs.on('error',(err)=>{
@@ -108,8 +123,8 @@ cjs.on('error',(err)=>{
 });
 cjs.on('playing',()=>{
   castButton.classList.remove('turning-on');
+  castButton.classList.remove('off');
   castButton.classList.add('on');
-
 });
 
 const toggleMute = () => {
@@ -166,7 +181,6 @@ controlsContainer.addEventListener('mousehover',()=>{
 
 document.addEventListener('mousemove', () => {
   if(video.paused){
-    console.log("Paused)");
     controlsContainer.style.opacity = '1';
     document.body.style.cursor = 'initial';
   }
@@ -239,7 +253,6 @@ fullScreenButton.addEventListener('click', toggleFullScreen);
 captionsButton.addEventListener('click',toggleCaptions);
 
 castButton.addEventListener('click',()=>{
-  console.log(video.currentTime);
   if(cjs.available && !cjs.connected){
     console.log(cjs.time);
     video.pause();
