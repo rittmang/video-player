@@ -41,16 +41,44 @@ captionsOff.style.display='none';
 fullVolumeButton.style.display = '';
 mutedButton.style.display = 'none';
 
-var track=video.textTracks[0];
-// var cue=track.cues[0];
-// if(typeof cue !== 'undefined'){
-//   cue.line=16;
-// }
 
-for(i=0;i<track.cues.length;i++){
-  track.cues[i].line=16;
+
+var span = document.getElementById("subtitle");
+var track = video.textTracks[0];
+track.mode = 'hidden';
+track.oncuechange = function(e) {
+    var cue = this.activeCues[0];
+    if (cue) {
+        span.innerHTML = '';
+        span.appendChild(cue.getCueAsHTML());
+    }
+    else{
+      span.innerHTML = '';
+    }
+};
+
+
+function updateMetadata(){
+  navigator.mediaSession.metadata = new MediaMetadata({
+    title:metadata.title,
+    artist:"on ROR Movies",
+    artwork:[{
+      src:video.poster,sizes:'1280X720',type:'image/jpg'
+    }]
+  });
+  updatePositionState();
 }
 
+function updatePositionState(){
+  if('setPositionState' in navigator.mediaSession){
+    console.log("Updating position state");
+    navigator.mediaSession.setPositionState({
+      duration:video.duration,
+      playbackRate:video.playbackRate,
+      position:video.currentTime
+    });
+  }
+}
 const displayControls = () => {
   controlsContainer.style.opacity = '1';
   document.body.style.cursor = 'initial';
@@ -68,30 +96,37 @@ const displayControls = () => {
 
 const playPause = () => {
   if (video.paused && !cjs.connected) {
-    video.play();
+    video.play()
+    .then(_=>updateMetadata())
+    .catch(error=>console.log(error.message));
   }
   else if(!video.paused && !cjs.connected) {
     video.pause();
   }
   else if(cjs.paused && cjs.connected){
     cjs.play();
+    playButton.style.display = 'none';
+    pauseButton.style.display = '';
   }
   else if(!cjs.paused && cjs.connected){
     cjs.pause();
+    playButton.style.display = '';
+    pauseButton.style.display = 'none';
   }
 
 };
 
-
-
 const toggleCaptions = () => {
-  if(video.textTracks[0]!=null && video.textTracks[0].mode!='showing'){
-      video.textTracks[0].mode='showing';
+  if(video.textTracks[0]!=null && span.style.display==='none'){
+      // video.textTracks[0].mode='showing';
+      span.style.display='';
+      console.log(span);
       captionsOn.style.display='';
       captionsOff.style.display='none';
     }
     else{
-      video.textTracks[0].mode='hidden';
+      span.style.display='none';
+      console.log("Off subs");
       captionsOff.style.display='';
       captionsOn.style.display='none';
     }
@@ -191,6 +226,7 @@ video.addEventListener('timeupdate', () => {
 video.addEventListener('play',()=>{
   playButton.style.display = 'none';
   pauseButton.style.display = '';
+
 });
 video.addEventListener('pause',()=>{
   playButton.style.display = '';
@@ -276,3 +312,34 @@ cjs.on('paused',()=>{
   playButton.style.display = '';
   pauseButton.style.display = 'none';
 })
+
+let defaultSkipTime=10;
+navigator.mediaSession.setActionHandler('seekbackward', function(event) {
+  console.log('> User clicked "Seek Backward" icon.');
+  const skipTime = event.seekOffset || defaultSkipTime;
+  video.currentTime = Math.max(video.currentTime - skipTime, 0);
+  updatePositionState();
+});
+
+navigator.mediaSession.setActionHandler('seekforward', function(event) {
+  console.log('> User clicked "Seek Forward" icon.');
+  const skipTime = event.seekOffset || defaultSkipTime;
+  video.currentTime = Math.min(video.currentTime + skipTime, video.duration);
+  updatePositionState();
+});
+
+/* Play & Pause */
+
+navigator.mediaSession.setActionHandler('play', async function() {
+  console.log('> User clicked "Play" icon.');
+  await video.play();
+  navigator.mediaSession.playbackState = "playing";
+  // Do something more than just playing video...
+});
+
+navigator.mediaSession.setActionHandler('pause', function() {
+  console.log('> User clicked "Pause" icon.');
+  video.pause();
+  navigator.mediaSession.playbackState = "paused";
+  // Do something more than just pausing video...
+});

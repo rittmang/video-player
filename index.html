@@ -16,10 +16,13 @@
     <!-- <div id="video-overlay">
       <img src="the-social-dilemma-wide-poster.jpg"/>
     </div> -->
+    <span id="subtitle">
+    </span>
     <video disableRemotePlayback poster="https://file-examples-com.github.io/uploads/2017/10/file_example_JPG_1MB.jpg" id="video" crossorigin="anonymous">
       <source src="ElephantsDream.mp4" type="video/mp4">
       <track label="English" kind="subtitles" src="subtitles-en.vtt" srclang="en" default> 
     </video>
+    
     <div class="controls-container">
       <div class="progress-controls">
         <div class="progress-bar">
@@ -161,12 +164,17 @@
       poster:document.getElementById("video").poster,
       title:document.getElementsByClassName('title')[0].getElementsByTagName("span")[0].innerHTML,
       description:'Sample Description',
+      type:'Series',
       subtitles:[{
         active:true,
         label:'English',
         src:document.querySelector('.video-container video track').src
       }]
     };
+    if(metadata.type==='Movie'){
+      document.getElementsByClassName("episodes")[0].remove();
+      document.getElementsByClassName("next")[0].remove();
+    }
     
     </script>
 </body>
